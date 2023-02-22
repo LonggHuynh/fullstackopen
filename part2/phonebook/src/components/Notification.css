@@ -1,0 +1,11 @@
+.notification {
+    color: green;
+    border-style: solid;
+    background-color: lightGrey;
+    padding: 10;
+    margin-bottom: 10;
+}
+
+.err{
+    color: red;
+}
