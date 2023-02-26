@@ -72,12 +72,12 @@ describe('viewing a specific blog', () => {
 
 describe('addition of a new blog', () => {
   test('succeeds with valid data', async () => {
-    const newBlog = new Blog({
+    const newBlog = {
       "title": "The brand new title",
       "author": "Long",
       "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
       "likes": "101"
-    })
+    }
 
     await api
       .post('/api/blogs')

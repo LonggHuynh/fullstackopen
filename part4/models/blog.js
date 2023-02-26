@@ -7,20 +7,25 @@ const blogSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  author: String,
+
+  author: {
+    type: String,
+  },
+
   url: {
     type: String,
     required: true,
   },
+
   likes: {
     type: Number,
     default: 0,
-    required: true,
   },
+
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  },
+  }
 })
 
 
