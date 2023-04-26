@@ -10,7 +10,7 @@ export const addPerson = (person) =>
 export const deletePerson = (id) =>
   axios.delete(`${url}/${id}`).then((response) => response.data);
 
-export const updatePerson = (person) => {
+export const updatePerson = async (person) => {
   return axios.put(`${url}/${person.id}`, person).then((response) => response.data);
 };
 

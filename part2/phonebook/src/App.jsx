@@ -40,10 +40,15 @@ const App = () => {
 
 
   const deleteOldPerson = (person) => {
-    deletePerson(person.id)
-      .then(() => forceUpdate())
-      .then(() => notify(`${person.name} is  deleted`, true))
-      .catch(_ => { notify('Person does not exists', false); forceUpdate() })
+    if (window.confirm(`Do you want to delete ${person.name}`)) {
+
+      deletePerson(person.id)
+        .then(() => forceUpdate())
+        .then(() => notify(`${person.name} is  deleted`, true))
+        .catch(_ => { notify('Person does not exists', false); forceUpdate() })
+
+    }
+
   }
 
   const addNewPerson = (person) => {

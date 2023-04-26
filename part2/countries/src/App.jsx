@@ -28,6 +28,11 @@ function App() {
   }, [allCountries, query])
 
 
+  useEffect(() => {
+    if (countries.length === 1) setSelectedCountry(countries[0])
+  }, [countries])
+
+
   return (
     <div>
       <p>
@@ -35,7 +40,7 @@ function App() {
       </p>
       <div>
         {countries.length > 10 && <p>Too many countries </p>}
-        {countries.length > 0 && countries.length <= 10 && countries.map(
+        {countries.length > 1 && countries.length <= 10 && countries.map(
           (country, ind) => <div key={ind}>{country.name.common} <button onClick={() => setSelectedCountry(country)}>View </button></div>
         )}
 

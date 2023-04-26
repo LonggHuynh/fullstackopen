@@ -20,7 +20,7 @@ const PersonForm = ({ persons, addNewPerson, updateOldPerson }) => {
       return
     }
     else
-      addNewPerson({ name, number, id: persons.length + 1 })
+      addNewPerson({ name, number, id: persons.length + 100 })
 
   }
   return (
