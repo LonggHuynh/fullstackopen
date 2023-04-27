@@ -1,7 +1,8 @@
 
 const router = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
+
+
 const middleware = require('../utils/middleware')
 router.get('/', async (request, response, next) => {
   try {
@@ -28,7 +29,8 @@ router.get('/:id', async (request, response, next) => {
 router.post('/', middleware.userExtractor, async (request, response, next) => {
   try {
     const blog = request.body
-    blog.user = request.user.id
+    const user = request.user
+    blog.user = user.id
     const newBlog = new Blog(blog)
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
@@ -42,37 +44,50 @@ router.post('/', middleware.userExtractor, async (request, response, next) => {
 
 
 
-router.delete('/:id', middleware.userExtractor, async (request, response, next) => {
-  try {
-    const { id } = request.params
-    if (id !== request.user.id) {
-      return response.status(401).json({ error: "Not your post :)" })
-    }
-    const blog = await Blog.findByIdAndDelete(id)
-    if (!blog)
-      return response.status(404).json({ error: "Not found" })
-    response.status(204).end()
-  } catch (err) {
-    next(err)
-  }
-})
-
-
 router.put('/:id', middleware.userExtractor, async (request, response, next) => {
   try {
-    const { id } = request.params
-    const updatedBlog = request.body
-    if (id !== request.user.id) {
-      return response.status(401).json({ error: "Not your post :)" })
+    const { id } = request.params;
+    const updatedBlogData = request.body;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return response.status(404).json({ error: 'Blog post not found' });
     }
-    const blog = await Blog.findOneAndReplace(id, updatedBlog)
-    if (!blog)
-      return response.status(404).json({ error: "Not found" })
-    response.status(204).end()
+
+    if (blog.user != request.user.id) {
+      return response.status(401).json({ error: 'Unauthorized: not your post' });
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(id, updatedBlogData, { new: true });
+    response.json(updatedBlog);
   } catch (err) {
-    next(err)
+    next(err);
   }
 })
+
+
+router.delete('/:id', middleware.userExtractor, async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return response.status(404).json({ error: 'Blog post not found' });
+    }
+
+
+    if (blog.user != request.user.id) {
+      return response.status(401).json({ error: 'Unauthorized: not your post' });
+    }
+
+    await Blog.findByIdAndDelete(id);
+    response.status(204).end();
+
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 module.exports = router

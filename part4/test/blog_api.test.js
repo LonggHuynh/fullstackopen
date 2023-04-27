@@ -68,6 +68,12 @@ describe('viewing a specific blog', () => {
       .get(`/api/blogs/${invalidId}`)
       .expect(400)
   })
+
+  test('unique identifier property of the blog posts is named id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToView = blogsAtStart[0]
+    expect(blogToView.id).toBeDefined()
+  })
 })
 
 describe('addition of a new blog', () => {
@@ -94,19 +100,46 @@ describe('addition of a new blog', () => {
     )
   })
 
-  test('fails with status code 400 if data invalid', async () => {
+
+
+  test('likes property is missing, it returns 0', async () => {
     const newBlog = {
-      important: true
+      "title": "The brand new title",
+      "author": "Long",
+      "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.likes).toBe(0)
+  })
+
+  test('fails with status code 400 if data invalid, return 400', async () => {
+    const newBlogWithoutTitle = {
+      author: 'Test Author',
+      url: 'https://example.com/missing-title',
+      likes: 4,
+    }
+
+    const newBlogWithoutUrl = {
+      title: 'Missing URL',
+      author: 'Test Author',
+      likes: 4,
     }
 
     await api
       .post('/api/blogs')
-      .send(newBlog)
+      .send(newBlogWithoutTitle)
       .expect(400)
 
-    const blogsAtEnd = await helper.blogsInDb()
-
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutUrl)
+      .expect(400)
   })
 })
 
