@@ -94,15 +94,18 @@ const App = () => {
   const removeBlog = (blogObject) => {
     const id = blogObject.id
 
-    blogService.remove(id)
-      .then(() => {
-        notify(`The blog ${blogObject.title}  by ${blogObject.author} is removed`, true)
-        setBlogs(prev => prev.filter(blog => blog !== blogObject))
-      })
-      .catch(err => {
-        notify(err.response.data.error, false)
+    const confirmRemove = window.confirm(`Do you want to remove the blog "${blogObject.title}" by ${blogObject.author}?`)
 
-      })
+    if (confirmRemove) {
+      blogService.remove(id)
+        .then(() => {
+          notify(`The blog ${blogObject.title} by ${blogObject.author} is removed`, true)
+          setBlogs(prev => prev.filter(blog => blog !== blogObject))
+        })
+        .catch(err => {
+          notify(err.response.data.error, false)
+        })
+    }
   }
 
   const addLike = async (blogObject) => {
