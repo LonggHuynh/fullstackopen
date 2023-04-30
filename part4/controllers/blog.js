@@ -44,23 +44,22 @@ router.post('/', middleware.userExtractor, async (request, response, next) => {
 
 
 
-router.put('/:id', middleware.userExtractor, async (request, response, next) => {
+router.put('/:id', async (request, response, next) => {
   try {
     const { id } = request.params;
     const updatedBlogData = request.body;
+    updatedBlogData.user = updatedBlogData.user.id
 
     const blog = await Blog.findById(id);
+
 
     if (!blog) {
       return response.status(404).json({ error: 'Blog post not found' });
     }
 
-    if (blog.user != request.user.id) {
-      return response.status(401).json({ error: 'Unauthorized: not your post' });
-    }
-
     const updatedBlog = await Blog.findByIdAndUpdate(id, updatedBlogData, { new: true });
     response.json(updatedBlog);
+
   } catch (err) {
     next(err);
   }

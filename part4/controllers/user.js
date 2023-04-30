@@ -29,10 +29,6 @@ router.get('/', async (request, response, next) => {
 
   try {
     const users = await User.find({}).populate('blogs')
-    console.log(1)
-    console.log(users)
-
-    console.log(process.env.MONGODB_URI)
     response.json(users)
   } catch (err) {
     next(err)
