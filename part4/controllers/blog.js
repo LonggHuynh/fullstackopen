@@ -61,7 +61,8 @@ router.put('/:id', async (request, response, next) => {
     response.json(updatedBlog);
 
   } catch (err) {
-    next(err);
+    next(err)
+    console.log(err)
   }
 })
 

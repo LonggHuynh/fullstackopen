@@ -81,7 +81,7 @@ describe('addition of a new blog', () => {
     const newBlog = {
       "title": "The brand new title",
       "author": "Long",
-      "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+      "url": "http://blog.com",
       "likes": "101"
     }
 
@@ -118,16 +118,16 @@ describe('addition of a new blog', () => {
     expect(response.body.likes).toBe(0)
   })
 
-  test('fails with status code 400 if data invalid, return 400', async () => {
+  test('if data invalid, return 400', async () => {
     const newBlogWithoutTitle = {
-      author: 'Test Author',
-      url: 'https://example.com/missing-title',
+      author: 'Some Author',
+      url: 'https://example.com',
       likes: 4,
     }
 
     const newBlogWithoutUrl = {
-      title: 'Missing URL',
-      author: 'Test Author',
+      title: 'The title',
+      author: 'The author',
       likes: 4,
     }
 
@@ -161,6 +161,37 @@ describe('deletion of a blog', () => {
     const titles = blogsAtEnd.map(r => r.title)
 
     expect(titles).not.toContain(blogToDelete.title)
+  })
+})
+
+describe('updating a blog entry', () => {
+  test('succeeds with valid data and valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlog = {
+      ...blogToUpdate,
+      title: 'Updated Title',
+      author: 'Updated Author',
+      
+      user: {
+        id: '5a422a851b54a676234d17f9'
+      }
+    }
+
+
+
+
+
+
+    const response = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.title).toEqual('Updated Title')
+    expect(response.body.author).toEqual('Updated Author')
   })
 })
 
