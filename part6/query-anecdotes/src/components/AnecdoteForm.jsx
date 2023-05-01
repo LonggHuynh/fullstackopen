@@ -1,9 +1,12 @@
-import { createNew } from '../requests';
-import { useMutation, useQueryClient } from 'react-query';
+import { createNew } from '../requests'
+import { useMutation, useQueryClient } from 'react-query'
 
-
+import NotificationContext from '../NotificationContext'
+import { useContext } from 'react'
 
 const AnecdoteForm = () => {
+
+  const [notification, notificationDispatch] = useContext(NotificationContext)
 
   const queryClient = useQueryClient()
 
@@ -15,17 +18,17 @@ const AnecdoteForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
     },
+    onError: () => {
+      notificationDispatch({ type: 'SET_MESSAGE', payload: 'too short anecdote, must have length 5 or more' })
+    }
   })
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
-    if (content.length >= 5) {
-      newAnecdote.mutateAsync(content);
-      event.target.anecdote.value = '';
-      console.log('new anecdote');
-    } else {
-      console.log('anecdote content should be at least 5 characters long');
-    }
+    newAnecdote.mutateAsync(content)
+    event.target.anecdote.value = ''
+    notificationDispatch({ type: 'SET_MESSAGE', payload: `anecdote '${content}' created` })
+
   }
 
   return (
